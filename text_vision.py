@@ -12,11 +12,17 @@ client = vision.ImageAnnotatorClient(credentials=credentials)
 
 def getXY(xy):
     string = str(xy)
-    x_index = string.index("x:") + 2
-    y_index = string.index("y:") + 2
+    if "x" in string:
+        x_index = string.index("x:") + 2
+        x_value = int(string[x_index:string.index("\n", x_index)])
+    else:
+        x_value = 0
 
-    x_value = int(string[x_index:string.index("\n", x_index)])
-    y_value = int(string[y_index:])
+    if "y" in string:
+        y_index = string.index("y:") + 2
+        y_value = int(string[y_index:])
+    else:
+        y_value = 0
 
     return [x_value, y_value]
 
@@ -83,9 +89,14 @@ def get_words_boxes(path):
             '{}\nFor more info on error messages, check: '
             'https://cloud.google.com/apis/design/errors'.format(
                 response.error.message))
-    
-    words = response.full_text_annotation.pages[0].blocks[0].paragraphs[0].words[0].symbols
-
+    # 获取最顶层page
+    response_page = response.full_text_annotation.pages[0]
+    # 进行blocks->paragraphs->words遍历得到所有的words
+    words = []
+    for b in response_page.blocks:
+        for p in b.paragraphs:
+            for w in p.words:
+                words.extend(w.symbols)
     output = []
     for w in words:
         xyxy = []
@@ -95,11 +106,9 @@ def get_words_boxes(path):
             "xyxy": xyxy,
             "text": w.text
         })
-        # vertices.append(w.bounding_box.vertices.x)
-
     return output
 
 if __name__ == "__main__":
     # run_quickstart()
-    # detect_text('imgs/88_0.jpg')
-    get_words_boxes('imgs/400_1.jpg')
+    # detect_text('imgs/118_1.jpg')
+    get_words_boxes('imgs/dora_1.jpg')

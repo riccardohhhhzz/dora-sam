@@ -11,7 +11,8 @@ import cv2
 import math
 from typing import List
 from text_vision import get_words_boxes
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageOps
+
 
 def preprocess(image):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -44,12 +45,14 @@ def draw_boxes(boxes, image, random_color=True):
         label_xyxy = [box['xyxy'][0], box['xyxy'][1]-8, box['xyxy'][0] + 12, box['xyxy'][1]]
         draw.rectangle(label_xyxy, fill=color_tuple)
         # 获取文本宽度和高度
-        text_width, text_height = draw.textsize(box['text'])
-        text_x = (label_xyxy[0] + label_xyxy[2] - text_width) // 2
-        text_y = (label_xyxy[1] + label_xyxy[3] - text_height) // 2
-        text_color = (255,255,255)
-        draw.text((text_x, text_y), box['text'], fill=text_color, anchor="mm")
-    
+        if len(box['text']) == 1:
+            box['text'] = box['text'].encode('utf-8')
+            text_width, text_height = draw.textsize(box['text'])
+            text_x = (label_xyxy[0] + label_xyxy[2] - text_width) // 2
+            text_y = (label_xyxy[1] + label_xyxy[3] - text_height) // 2
+            text_color = (255,255,255)
+            draw.text((text_x, text_y), box['text'], fill=text_color, anchor="mm")
+            
     return np.array(image)
 
 def show_mask(mask, image, random_color=True):
