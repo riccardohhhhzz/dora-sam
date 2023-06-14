@@ -82,3 +82,12 @@ gcloud auth application-default print-access-token
 sudo cog predict -i image_path=@imgs/error_1.jpg
 ```
 
+
+
+## 5	Reference
+
+* [Grounded-Segment-Anything](https://github.com/IDEA-Research/Grounded-Segment-Anything/blob/main/grounded_sam.ipynb)
+* [SAM-predictor](https://github.com/facebookresearch/segment-anything/blob/main/segment_anything/predictor.py)
+
+* [Google Cloud Vision API](https://cloud.google.com/vision/docs/ocr?hl=zh-cn)
+
